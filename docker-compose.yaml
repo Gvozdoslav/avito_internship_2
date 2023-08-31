@@ -5,6 +5,8 @@ services:
     image: postgres:14
     ports:
       - "5434:5432"
+    volumes:
+      - "./pkg/repository/postgres/init_db.sql:/docker-entrypoint-initdb.d/initdb.sql"
     environment:
       POSTGRES_DB: "avito-db"
       POSTGRES_USER: "avito"
