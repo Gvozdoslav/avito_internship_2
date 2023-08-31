@@ -1,0 +1,18 @@
+port: "8080"
+db:
+  #  host: go-start-db
+  #  port: 5432
+  host: localhost
+  port: 5434
+  username: avito
+  name: avito-db
+  url: postgres://postgres:postgres@localhost:5434/avito-db?sslmode=disable
+  migration: file://schema
+
+testdb:
+  host: localhost
+  port: 54321
+  username: postgres
+  name: postgres
+  url: postgres://postgres:postgres@localhost:54320/postgres?sslmode=disable
+  migration: file://schema
