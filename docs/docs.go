@@ -17,7 +17,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/segment/create/{slug}": {
+        "/api/segment/create": {
             "post": {
                 "description": "Create segment by slug",
                 "consumes": [
@@ -31,18 +31,20 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "Slug",
-                        "name": "slug",
-                        "in": "path",
-                        "required": true
+                        "name": "segmentDto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AddSegmentDto"
+                        }
                     }
                 ],
                 "responses": {
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Segment"
+                            "$ref": "#/definitions/dto.AddSegmentDto"
                         }
                     },
                     "400": {
@@ -337,7 +339,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/get/csv/{id}": {
+        "/api/user/get/csv": {
             "get": {
                 "description": "Get user's segments in csv format by user id",
                 "consumes": [
@@ -351,16 +353,21 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "User segments range",
+                        "name": "userSegmentRange",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserSegmentsCsvDto"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -622,6 +629,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.AddSegmentDto": {
+            "type": "object",
+            "properties": {
+                "percent": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.SegmentDto": {
             "type": "object",
             "properties": {
@@ -644,6 +662,20 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/dto.SegmentDto"
                     }
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UserSegmentsCsvDto": {
+            "type": "object",
+            "properties": {
+                "fromTime": {
+                    "type": "string"
+                },
+                "toTime": {
+                    "type": "string"
                 },
                 "userId": {
                     "type": "integer"

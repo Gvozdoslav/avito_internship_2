@@ -1,4 +1,11 @@
 definitions:
+  dto.AddSegmentDto:
+    properties:
+      percent:
+        type: integer
+      slug:
+        type: string
+    type: object
   dto.SegmentDto:
     properties:
       addTime:
@@ -14,6 +21,15 @@ definitions:
         items:
           $ref: '#/definitions/dto.SegmentDto'
         type: array
+      userId:
+        type: integer
+    type: object
+  dto.UserSegmentsCsvDto:
+    properties:
+      fromTime:
+        type: string
+      toTime:
+        type: string
       userId:
         type: integer
     type: object
@@ -63,24 +79,25 @@ paths:
           schema: {}
       tags:
       - Segment
-  /api/segment/create/{slug}:
+  /api/segment/create:
     post:
       consumes:
       - application/json
       description: Create segment by slug
       parameters:
       - description: Slug
-        in: path
-        name: slug
+        in: body
+        name: segmentDto
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/dto.AddSegmentDto'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.Segment'
+            $ref: '#/definitions/dto.AddSegmentDto'
         "400":
           description: Bad Request
           schema: {}
@@ -272,22 +289,25 @@ paths:
           schema: {}
       tags:
       - Users
-  /api/user/get/csv/{id}:
+  /api/user/get/csv:
     get:
       consumes:
       - application/json
       description: Get user's segments in csv format by user id
       parameters:
-      - description: User id
-        in: path
-        name: id
+      - description: User segments range
+        in: body
+        name: userSegmentRange
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/dto.UserSegmentsCsvDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            type: string
         "400":
           description: Bad Request
           schema: {}

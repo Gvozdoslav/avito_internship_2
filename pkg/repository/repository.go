@@ -15,7 +15,7 @@ type UserRepository interface {
 type SegmentRepository interface {
 	GetSegmentBySlug(slug string) (*model.Segment, error)
 	GetAllSegments() ([]*model.Segment, error)
-	CreateSegment(slug string) (*model.Segment, error)
+	CreateSegment(slug string, percent *int) (*model.Segment, error)
 	DeleteSegment(slug string) error
 }
 

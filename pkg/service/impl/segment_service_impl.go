@@ -3,6 +3,7 @@ package impl
 import (
 	"avito2/pkg/model"
 	"avito2/pkg/repository"
+	"avito2/pkg/service/dto"
 )
 
 type SegmentServiceImpl struct {
@@ -35,14 +36,14 @@ func (s *SegmentServiceImpl) GetAllSegments() ([]*model.Segment, error) {
 	return segments, nil
 }
 
-func (s *SegmentServiceImpl) CreateSegment(slug string) (*model.Segment, error) {
+func (s *SegmentServiceImpl) CreateSegment(segmentDto *dto.AddSegmentDto) (*dto.AddSegmentDto, error) {
 
-	segment, err := (*s.segmentRepository).CreateSegment(slug)
+	_, err := (*s.segmentRepository).CreateSegment(segmentDto.Slug, segmentDto.Percent)
 	if err != nil {
 		return nil, err
 	}
 
-	return segment, err
+	return segmentDto, err
 }
 
 func (s *SegmentServiceImpl) DeleteSegment(slug string) error {

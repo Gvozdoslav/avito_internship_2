@@ -1,7 +1,5 @@
 port: "8080"
 db:
-  #  host: go-start-db
-  #  port: 5432
   host: localhost
   port: 5434
   username: avito

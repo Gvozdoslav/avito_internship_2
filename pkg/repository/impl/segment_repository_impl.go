@@ -3,7 +3,9 @@ package impl
 import (
 	"avito2/pkg/model"
 	"avito2/pkg/repository/query"
+	"database/sql"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type SegmentRepositoryImpl struct {
@@ -38,7 +40,7 @@ func (s *SegmentRepositoryImpl) GetAllSegments() ([]*model.Segment, error) {
 	return segments, nil
 }
 
-func (s *SegmentRepositoryImpl) CreateSegment(slug string) (*model.Segment, error) {
+func (s *SegmentRepositoryImpl) CreateSegment(slug string, percent *int) (*model.Segment, error) {
 
 	tx, err := s.db.Begin()
 	if err != nil {
@@ -49,6 +51,19 @@ func (s *SegmentRepositoryImpl) CreateSegment(slug string) (*model.Segment, erro
 	if err = tx.QueryRow(s.queries.CreateSegmentQuery, slug).Scan(&createdSlug); err != nil {
 		tx.Rollback()
 		return nil, err
+	}
+
+	if percent != nil {
+		var usersPercent []*model.User
+		if err = s.db.Select(&usersPercent, s.queries.GetPercentOfUsersQuery, *percent); err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+
+		if err = s.addUsersToTheSegment(tx, usersPercent, slug); err != nil {
+			tx.Rollback()
+			return nil, err
+		}
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -86,6 +101,19 @@ func (s *SegmentRepositoryImpl) DeleteSegment(slug string) error {
 	if err = tx.Commit(); err != nil {
 		tx.Rollback()
 		return err
+	}
+
+	return nil
+}
+
+func (s *SegmentRepositoryImpl) addUsersToTheSegment(tx *sql.Tx, usersPercent []*model.User, slug string) error {
+
+	now := time.Now()
+	for _, user := range usersPercent {
+		_, err := tx.Exec(s.queries.AddUserToSegmentQuery, user.Id, slug, now)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

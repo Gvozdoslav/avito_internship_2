@@ -24,7 +24,7 @@ type UserService interface {
 type SegmentService interface {
 	GetSegment(slug string) (*model.Segment, error)
 	GetAllSegments() ([]*model.Segment, error)
-	CreateSegment(slug string) (*model.Segment, error)
+	CreateSegment(segmentDto *dto.AddSegmentDto) (*dto.AddSegmentDto, error)
 	DeleteSegment(slug string) error
 }
 

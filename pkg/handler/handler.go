@@ -55,7 +55,7 @@ func (handler *Handler) InitRoutes() *gin.Engine {
 		{
 			segment.GET("/get/:slug", handler.GetSegment)
 			segment.GET("/get/all", handler.GetAllSegments)
-			segment.POST("/create/:slug", handler.CreateSegment)
+			segment.POST("/create", handler.CreateSegment)
 			segment.DELETE("/delete/:slug", handler.DeleteSegment)
 		}
 	}
@@ -377,20 +377,20 @@ func (handler *Handler) GetAllSegments(ctx *gin.Context) {
 // @Tags Segment
 // @Accept json
 // @Produce json
-// @Param slug path string true "Slug"
-// @Success 201 {object} model.Segment
+// @Param segmentDto body dto.AddSegmentDto true "Slug"
+// @Success 201 {object} dto.AddSegmentDto
 // @Failure 400 {object} error
 // @Failure 500 {object} error
-// @Router /api/segment/create/{slug} [post]
+// @Router /api/segment/create [post]
 func (handler *Handler) CreateSegment(ctx *gin.Context) {
 
-	slug := ctx.Param(slug)
-	if slug == "" || &slug == nil {
-		response.NewErrorResponse(ctx, http.StatusBadRequest, "Slug is not specified!")
+	var segmentDto dto.AddSegmentDto
+	if err := ctx.BindJSON(&segmentDto); err != nil {
+		response.NewErrorResponse(ctx, http.StatusBadRequest, "Given body is not valid")
 		return
 	}
 
-	segment, err := handler.services.CreateSegment(slug)
+	segment, err := handler.services.CreateSegment(&segmentDto)
 	if err != nil {
 		response.NewErrorResponse(ctx, http.StatusInternalServerError, "Something went wrong due creating segment!")
 		return
