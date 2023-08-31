@@ -1,0 +1,415 @@
+definitions:
+  dto.SegmentDto:
+    properties:
+      createTime:
+        type: string
+      expireTime:
+        type: string
+      slug:
+        type: string
+    type: object
+  dto.UserDto:
+    properties:
+      segments:
+        items:
+          $ref: '#/definitions/dto.SegmentDto'
+        type: array
+      userId:
+        type: integer
+    type: object
+  dto.UserSingleSegmentDto:
+    properties:
+      segment:
+        $ref: '#/definitions/dto.SegmentDto'
+      userId:
+        type: integer
+    type: object
+  model.Segment:
+    properties:
+      slug:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Gvozdoslav
+  description: Avito Segments
+  title: Avito Intership Task
+  version: "1.0"
+paths:
+  /api/segment/{slug}:
+    get:
+      consumes:
+      - application/json
+      description: Get segment by slug
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Segment'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Segment
+  /api/segment/create/{slug}:
+    post:
+      consumes:
+      - application/json
+      description: Create segment by slug
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Segment'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Segment
+  /api/segment/delete/{slug}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete segment by slug
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Segment
+  /api/segment/get/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all segments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Segment'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Segment
+  /api/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user with segments by user id
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDto'
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/user/add_segment:
+    post:
+      consumes:
+      - application/json
+      description: Add user to the segment
+      parameters:
+      - description: User Id
+        in: body
+        name: userId
+        required: true
+        schema:
+          type: integer
+      - description: Segment
+        in: body
+        name: segment
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SegmentDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/user/add_segments:
+    post:
+      consumes:
+      - application/json
+      description: Add user to the segments
+      parameters:
+      - description: User Id
+        in: body
+        name: userId
+        required: true
+        schema:
+          type: integer
+      - description: Segments
+        in: body
+        name: segment
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.SegmentDto'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/user/create/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Create user by it's id
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.UserDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/user/get/active_segments/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user with active segments by user id
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDto'
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/user/remove_segment:
+    delete:
+      consumes:
+      - application/json
+      description: Remove user segment
+      parameters:
+      - description: User Single Segment Dto
+        in: body
+        name: userSingleSegmentDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserSingleSegmentDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/user/remove_segments:
+    delete:
+      consumes:
+      - application/json
+      description: Remove user segments
+      parameters:
+      - description: User Id
+        in: body
+        name: userId
+        required: true
+        schema:
+          type: integer
+      - description: Segments
+        in: body
+        name: segment
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.SegmentDto'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/user/update:
+    put:
+      consumes:
+      - application/json
+      description: SET user segments
+      parameters:
+      - description: User Id
+        in: body
+        name: userId
+        required: true
+        schema:
+          type: integer
+      - description: Segments
+        in: body
+        name: segment
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.SegmentDto'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDto'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users with segments they are in
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.UserDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+  /api/users/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user by id
+      parameters:
+      - description: User Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
+swagger: "2.0"

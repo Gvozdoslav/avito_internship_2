@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "avito2/docs"
 	"avito2/pkg/handler"
 	"avito2/pkg/repository"
 	"avito2/pkg/repository/postgres"
@@ -11,6 +12,11 @@ import (
 	"os"
 )
 
+// @title			Avito Intership Task
+// @version			1.0
+// @description		Avito Segments
+// @contact.name	Gvozdoslav
+// @host			localhost:8080
 func main() {
 	logrus.SetFormatter(new(logrus.TextFormatter))
 	logrus.SetLevel(logrus.DebugLevel)
