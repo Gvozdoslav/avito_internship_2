@@ -4,6 +4,7 @@ import (
 	"avito2/pkg/model"
 	"avito2/pkg/repository/impl"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type UserRepository interface {
@@ -22,13 +23,13 @@ type UserSegmentRepository interface {
 	GetUserById(userId int) ([]*model.UserSegment, error)
 	GetAllUsers() ([]*model.UserSegment, error)
 	GetUserActiveSegments(userId int) ([]*model.UserSegment, error)
+	GetUserSegmentsDataCsv(userId int, fromTime *time.Time, toTime *time.Time) (string, error)
 	AddUserToSegment(userSegment *model.UserSegment) ([]*model.UserSegment, error)
 	AddUserToSegments(userId int, userSegment []*model.UserSegment) ([]*model.UserSegment, error)
 	RemoveUserFromSegment(userSegment *model.UserSegment) ([]*model.UserSegment, error)
 	RemoveUserFromSegments(userId int, userSegments []*model.UserSegment) ([]*model.UserSegment, error)
 	RemoveExpiredUserSegments() error
 	UpdateUserSegments(userId int, userSegment []*model.UserSegment) ([]*model.UserSegment, error)
-	GetUserSegmentsDataCsv(userId int) (string, error)
 }
 
 type Repositories struct {

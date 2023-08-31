@@ -17,7 +17,7 @@ type UserService interface {
 	RemoveUserFromSegment(userSingleSegmentDto *dto.UserSingleSegmentDto) (*dto.UserDto, error)
 	RemoveUserFromSegments(userDto *dto.UserDto) (*dto.UserDto, error)
 	UpdateUserSegments(userDto *dto.UserDto) (*dto.UserDto, error)
-	GetUserSegmentsDataCsvUrl(userId int) (string, error)
+	GetUserSegmentsDataCsvUrl(userCsvDto *dto.UserSegmentsCsvDto) (string, error)
 	DeleteUser(id int) error
 }
 

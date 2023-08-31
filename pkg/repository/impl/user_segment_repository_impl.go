@@ -9,6 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"go/types"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -207,15 +208,20 @@ func (u *UserSegmentRepositoryImpl) UpdateUserSegments(userId int, userSegments 
 	return foundUserSegments, nil
 }
 
-func (u *UserSegmentRepositoryImpl) GetUserSegmentsDataCsv(userId int) (string, error) {
+func (u *UserSegmentRepositoryImpl) GetUserSegmentsDataCsv(userId int, fromTime *time.Time, toTime *time.Time) (string, error) {
 
-	rows, err := u.db.Query(u.queries.GetUserQuery, userId)
+	rows, err := u.db.Query(u.queries.GetUserSegmentsByPeriod, userId, fromTime, toTime)
 	if err != nil {
 		return "", err
 	}
 
-	now := time.Now()
-	fileName := fmt.Sprintf("user_%d_report_%s.csv", userId, now.Format("2006-01-02"))
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	fileName := filepath.Join(dir, fmt.Sprintf("user_%d_report_%s__%s.csv",
+		userId, fromTime.Format("2006-01-02"), toTime.Format("2006-01-02")))
 	file, err := os.Create(fileName)
 	if err != nil {
 		return "", err
@@ -225,12 +231,18 @@ func (u *UserSegmentRepositoryImpl) GetUserSegmentsDataCsv(userId int) (string, 
 	csvWriter := csv.NewWriter(file)
 	defer csvWriter.Flush()
 
-	columns, err := rows.Columns()
+	headers := []string{"user_id", "segment_slug", "operation", "time"}
+	err = csvWriter.Write(headers)
 	if err != nil {
+		fmt.Println("Error writing CSV header:", err)
 		return "", err
 	}
 
-	csvWriter.Write(columns)
+	columns, err := rows.Columns()
+	if err != nil {
+		fmt.Println("Error writing CSV header:", err)
+		return "", err
+	}
 
 	values := make([]interface{}, len(columns))
 	valuePtrs := make([]interface{}, len(columns))
@@ -241,15 +253,24 @@ func (u *UserSegmentRepositoryImpl) GetUserSegmentsDataCsv(userId int) (string, 
 		if err := rows.Scan(valuePtrs...); err != nil {
 			return "", err
 		}
-		var row []string
-		for _, value := range values {
-			if value != nil {
-				row = append(row, fmt.Sprintf("%v", value))
-			} else {
-				row = append(row, "")
-			}
+
+		if values[3] != nil {
+			var row []string
+			row = append(row, fmt.Sprintf("%v", values[1]))
+			row = append(row, fmt.Sprintf("%v", values[2]))
+			row = append(row, "added")
+			row = append(row, fmt.Sprintf("%v", values[3]))
+			csvWriter.Write(row)
 		}
-		csvWriter.Write(row)
+
+		if values[4] != nil {
+			var row []string
+			row = append(row, fmt.Sprintf("%v", values[1]))
+			row = append(row, fmt.Sprintf("%v", values[2]))
+			row = append(row, "left")
+			row = append(row, fmt.Sprintf("%v", values[4]))
+			csvWriter.Write(row)
+		}
 	}
 
 	return file.Name(), nil

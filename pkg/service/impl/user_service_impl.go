@@ -123,9 +123,10 @@ func (u *UserServiceImpl) DeleteUser(id int) error {
 	return nil
 }
 
-func (u *UserServiceImpl) GetUserSegmentsDataCsvUrl(userId int) (string, error) {
+func (u *UserServiceImpl) GetUserSegmentsDataCsvUrl(userCsvDto *dto.UserSegmentsCsvDto) (string, error) {
 
-	csvUrl, err := (*u.userSegmentRepository).GetUserSegmentsDataCsv(userId)
+	csvUrl, err := (*u.userSegmentRepository).GetUserSegmentsDataCsv(userCsvDto.UserId,
+		userCsvDto.FromTime, userCsvDto.ToTime)
 	if err != nil {
 		return "", err
 	}

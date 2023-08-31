@@ -41,7 +41,7 @@ func (handler *Handler) InitRoutes() *gin.Engine {
 			user.GET("/all", handler.GetAllUsers)
 			user.GET("/get/:id", handler.GetUserById)
 			user.GET("/get/active_segments/:id", handler.GetUserActiveSegments)
-			user.GET("/get/csv/:id", handler.GetUserSegmentsCsv)
+			user.GET("/get/csv", handler.GetUserSegmentsCsv)
 			user.POST("/create/:id", handler.CreateUser)
 			user.POST("/add_segment", handler.AddUserToSegment)
 			user.POST("/add_segments", handler.AddUserToSegments)
@@ -430,22 +430,22 @@ func (handler *Handler) DeleteSegment(ctx *gin.Context) {
 // @Tags Users
 // @Accept json
 // @Produce json
-// @Param id path int true "User id"
-// @Success 200 {object} nil
+// @Param userSegmentRange body dto.UserSegmentsCsvDto true "User segments range"
+// @Success 200 {object} string
 // @Failure 400 {object} error
 // @Failure 500 {object} error
-// @Router /api/user/get/csv/{id} [get]
+// @Router /api/user/get/csv [get]
 func (handler *Handler) GetUserSegmentsCsv(ctx *gin.Context) {
 
-	userId, err := parseIntFromString(ctx.Param(id))
-	if err != nil {
-		response.NewErrorResponse(ctx, http.StatusBadRequest, "User id is not specified")
+	var userDto dto.UserSegmentsCsvDto
+	if err := ctx.BindJSON(&userDto); err != nil {
+		response.NewErrorResponse(ctx, http.StatusBadRequest, "Given body is not valid")
 		return
 	}
 
-	csvUrl, err := handler.services.GetUserSegmentsDataCsvUrl(userId)
+	csvUrl, err := handler.services.GetUserSegmentsDataCsvUrl(&userDto)
 	if err != nil {
-		response.NewErrorResponse(ctx, http.StatusInternalServerError, "Something went wrong due getting the csv :/")
+		response.NewErrorResponse(ctx, http.StatusInternalServerError, "Something went wrong due removing the segments")
 		return
 	}
 
