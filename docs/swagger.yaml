@@ -272,6 +272,30 @@ paths:
           schema: {}
       tags:
       - Users
+  /api/user/get/csv/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user's segments in csv format by user id
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      tags:
+      - Users
   /api/user/remove_segment:
     delete:
       consumes:

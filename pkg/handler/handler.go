@@ -425,6 +425,16 @@ func (handler *Handler) DeleteSegment(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, nil)
 }
 
+// GetUserSegmentsCsv @Summary Get user's segments csv
+// @Description Get user's segments in csv format by user id
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param id path int true "User id"
+// @Success 200 {object} nil
+// @Failure 400 {object} error
+// @Failure 500 {object} error
+// @Router /api/user/get/csv/{id} [get]
 func (handler *Handler) GetUserSegmentsCsv(ctx *gin.Context) {
 
 	userId, err := parseIntFromString(ctx.Param(id))
