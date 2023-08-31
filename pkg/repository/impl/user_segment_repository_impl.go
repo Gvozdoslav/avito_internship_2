@@ -220,7 +220,7 @@ func (u *UserSegmentRepositoryImpl) GetUserSegmentsDataCsv(userId int, fromTime 
 		return "", err
 	}
 
-	fileName := filepath.Join(dir, fmt.Sprintf("user_%d_report_%s__%s.csv",
+	fileName := filepath.Join(dir, "assets", fmt.Sprintf("user_%d_report_%s__%s.csv",
 		userId, fromTime.Format("2006-01-02"), toTime.Format("2006-01-02")))
 	file, err := os.Create(fileName)
 	if err != nil {
