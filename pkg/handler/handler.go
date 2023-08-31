@@ -216,8 +216,6 @@ func (handler *Handler) AddUserToSegments(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
-// TODO:
-
 // RemoveUserSegment @Summary Remove user from segment
 // @Description Remove user segment
 // @Tags Users
