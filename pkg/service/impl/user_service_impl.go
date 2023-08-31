@@ -123,6 +123,16 @@ func (u *UserServiceImpl) DeleteUser(id int) error {
 	return nil
 }
 
+func (u *UserServiceImpl) GetUserSegmentsDataCsvUrl(userId int) (string, error) {
+
+	csvUrl, err := (*u.userSegmentRepository).GetUserSegmentsDataCsv(userId)
+	if err != nil {
+		return "", err
+	}
+
+	return csvUrl, nil
+}
+
 func getUserSegmentsDtos(usersSegments []*model.UserSegment) ([]*dto.UserDto, error) {
 	var usersMap = make(map[int][]*model.UserSegment)
 	for _, userSegment := range usersSegments {

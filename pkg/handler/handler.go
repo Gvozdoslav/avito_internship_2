@@ -41,6 +41,7 @@ func (handler *Handler) InitRoutes() *gin.Engine {
 			user.GET("/all", handler.GetAllUsers)
 			user.GET("/get/:id", handler.GetUserById)
 			user.GET("/get/active_segments/:id", handler.GetUserActiveSegments)
+			user.GET("/get/csv/:id", handler.GetUserSegmentsCsv)
 			user.POST("/create/:id", handler.CreateUser)
 			user.POST("/add_segment", handler.AddUserToSegment)
 			user.POST("/add_segments", handler.AddUserToSegments)
@@ -422,6 +423,23 @@ func (handler *Handler) DeleteSegment(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, nil)
+}
+
+func (handler *Handler) GetUserSegmentsCsv(ctx *gin.Context) {
+
+	userId, err := parseIntFromString(ctx.Param(id))
+	if err != nil {
+		response.NewErrorResponse(ctx, http.StatusBadRequest, "User id is not specified")
+		return
+	}
+
+	csvUrl, err := handler.services.GetUserSegmentsDataCsvUrl(userId)
+	if err != nil {
+		response.NewErrorResponse(ctx, http.StatusInternalServerError, "Something wen wrong due getting the csv :/")
+		return
+	}
+
+	ctx.JSON(http.StatusOK, csvUrl)
 }
 
 func parseIntFromString(s string) (int, error) {

@@ -38,7 +38,7 @@ func userSegmentFromUserDto(userId int, segment *SegmentDto) *model.UserSegment 
 	return &model.UserSegment{
 		UserId:      userId,
 		SegmentSlug: segment.Slug,
-		CreateTime:  segment.CreateTime,
+		AddTime:     segment.AddTime,
 		ExpireTime:  segment.ExpireTime,
 	}
 }

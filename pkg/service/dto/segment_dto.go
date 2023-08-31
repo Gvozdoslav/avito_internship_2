@@ -7,14 +7,14 @@ import (
 
 type SegmentDto struct {
 	Slug       string     `json:"slug"`
-	CreateTime *time.Time `json:"createTime"`
+	AddTime    *time.Time `json:"createTime"`
 	ExpireTime *time.Time `json:"expireTime"`
 }
 
 func NewSegmentDtoFromModel(userSegment *model.UserSegment) *SegmentDto {
 	return &SegmentDto{
 		Slug:       userSegment.SegmentSlug,
-		CreateTime: userSegment.CreateTime,
+		AddTime:    userSegment.AddTime,
 		ExpireTime: userSegment.ExpireTime,
 	}
 }

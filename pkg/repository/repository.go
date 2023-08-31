@@ -27,6 +27,7 @@ type UserSegmentRepository interface {
 	RemoveUserFromSegment(userSegment *model.UserSegment) ([]*model.UserSegment, error)
 	RemoveUserFromSegments(userId int, userSegments []*model.UserSegment) ([]*model.UserSegment, error)
 	UpdateUserSegments(userId int, userSegment []*model.UserSegment) ([]*model.UserSegment, error)
+	GetUserSegmentsDataCsv(userId int) (string, error)
 }
 
 type Repositories struct {

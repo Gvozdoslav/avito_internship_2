@@ -4,8 +4,11 @@ import (
 	"avito2/pkg/model"
 	"avito2/pkg/repository/query"
 	"database/sql"
+	"encoding/csv"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"go/types"
+	"os"
 	"time"
 )
 
@@ -185,6 +188,54 @@ func (u *UserSegmentRepositoryImpl) UpdateUserSegments(userId int, userSegments 
 	return foundUserSegments, nil
 }
 
+func (u *UserSegmentRepositoryImpl) GetUserSegmentsDataCsv(userId int) (string, error) {
+
+	rows, err := u.db.Query(u.queries.GetUserQuery, userId)
+	if err != nil {
+		return "", err
+	}
+
+	now := time.Now()
+	fileName := fmt.Sprintf("user_%d_report_%s.csv", userId, now.Format("2006-01-02"))
+	file, err := os.Create(fileName)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	csvWriter := csv.NewWriter(file)
+	defer csvWriter.Flush()
+
+	columns, err := rows.Columns()
+	if err != nil {
+		return "", err
+	}
+
+	csvWriter.Write(columns)
+
+	values := make([]interface{}, len(columns))
+	valuePtrs := make([]interface{}, len(columns))
+	for rows.Next() {
+		for i := range columns {
+			valuePtrs[i] = &values[i]
+		}
+		if err := rows.Scan(valuePtrs...); err != nil {
+			return "", err
+		}
+		var row []string
+		for _, value := range values {
+			if value != nil {
+				row = append(row, fmt.Sprintf("%v", value))
+			} else {
+				row = append(row, "")
+			}
+		}
+		csvWriter.Write(row)
+	}
+
+	return file.Name(), nil
+}
+
 func (u *UserSegmentRepositoryImpl) addUserSegment(userSegment *model.UserSegment, tx *sql.Tx) (int, error) {
 
 	if u.isUserSegmentExist(userSegment) {
@@ -193,7 +244,7 @@ func (u *UserSegmentRepositoryImpl) addUserSegment(userSegment *model.UserSegmen
 
 	var id int
 	if err := tx.QueryRow(u.queries.AddUserSegmentQuery, userSegment.UserId,
-		userSegment.SegmentSlug, userSegment.CreateTime, userSegment.ExpireTime).Scan(&id); err != nil {
+		userSegment.SegmentSlug, userSegment.AddTime, userSegment.ExpireTime).Scan(&id); err != nil {
 		tx.Rollback()
 		return -1, err
 	}

@@ -20,7 +20,7 @@ func (userDto *UserSingleSegmentDto) ToUserSegment() *model.UserSegment {
 	return &model.UserSegment{
 		UserId:      userDto.UserId,
 		SegmentSlug: userDto.Segment.Slug,
-		CreateTime:  userDto.Segment.CreateTime,
+		AddTime:     userDto.Segment.AddTime,
 		ExpireTime:  userDto.Segment.ExpireTime,
 	}
 }
