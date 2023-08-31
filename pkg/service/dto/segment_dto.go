@@ -7,7 +7,7 @@ import (
 
 type SegmentDto struct {
 	Slug       string     `json:"slug"`
-	AddTime    *time.Time `json:"createTime"`
+	AddTime    *time.Time `json:"addTime"`
 	ExpireTime *time.Time `json:"expireTime"`
 }
 

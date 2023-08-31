@@ -625,7 +625,7 @@ const docTemplate = `{
         "dto.SegmentDto": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "addTime": {
                     "type": "string"
                 },
                 "expireTime": {

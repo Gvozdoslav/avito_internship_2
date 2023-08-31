@@ -156,6 +156,25 @@ func (u *UserSegmentRepositoryImpl) RemoveUserFromSegments(userId int, userSegme
 	return foundUserSegments, nil
 }
 
+func (u *UserSegmentRepositoryImpl) RemoveExpiredUserSegments() error {
+
+	tx, err := u.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(u.queries.SetExpiredUserSegmentsQuery, model.Expired, time.Now())
+	if err != nil {
+		return err
+	}
+
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (u *UserSegmentRepositoryImpl) UpdateUserSegments(userId int, userSegments []*model.UserSegment) ([]*model.UserSegment, error) {
 
 	tx, err := u.db.Begin()
@@ -238,7 +257,7 @@ func (u *UserSegmentRepositoryImpl) GetUserSegmentsDataCsv(userId int) (string, 
 
 func (u *UserSegmentRepositoryImpl) addUserSegment(userSegment *model.UserSegment, tx *sql.Tx) (int, error) {
 
-	if u.isUserSegmentExist(userSegment) {
+	if u.isActiveUserSegmentExist(userSegment) {
 		return -1, types.Error{Msg: "UserSegment already exists!"}
 	}
 
@@ -263,11 +282,11 @@ func (u *UserSegmentRepositoryImpl) removeUserSegment(userSegment *model.UserSeg
 	return nil
 }
 
-func (u *UserSegmentRepositoryImpl) isUserSegmentExist(userSegment *model.UserSegment) bool {
+func (u *UserSegmentRepositoryImpl) isActiveUserSegmentExist(userSegment *model.UserSegment) bool {
 
 	var foundUserSegment model.UserSegment
-	if err := u.db.Get(&foundUserSegment, u.queries.GetUserSegmentByUserIdAndSlug,
-		userSegment.UserId, userSegment.SegmentSlug); err != nil {
+	if err := u.db.Get(&foundUserSegment, u.queries.GetActiveUserSegmentByUserIdAndSlug,
+		userSegment.UserId, userSegment.SegmentSlug, model.Active); err != nil {
 		return false
 	}
 

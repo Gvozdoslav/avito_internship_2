@@ -26,6 +26,7 @@ type UserSegmentRepository interface {
 	AddUserToSegments(userId int, userSegment []*model.UserSegment) ([]*model.UserSegment, error)
 	RemoveUserFromSegment(userSegment *model.UserSegment) ([]*model.UserSegment, error)
 	RemoveUserFromSegments(userId int, userSegments []*model.UserSegment) ([]*model.UserSegment, error)
+	RemoveExpiredUserSegments() error
 	UpdateUserSegments(userId int, userSegment []*model.UserSegment) ([]*model.UserSegment, error)
 	GetUserSegmentsDataCsv(userId int) (string, error)
 }

@@ -445,7 +445,7 @@ func (handler *Handler) GetUserSegmentsCsv(ctx *gin.Context) {
 
 	csvUrl, err := handler.services.GetUserSegmentsDataCsvUrl(userId)
 	if err != nil {
-		response.NewErrorResponse(ctx, http.StatusInternalServerError, "Something wen wrong due getting the csv :/")
+		response.NewErrorResponse(ctx, http.StatusInternalServerError, "Something went wrong due getting the csv :/")
 		return
 	}
 

@@ -16,7 +16,8 @@ CREATE TABLE user_segment
     add_time TIMESTAMP NOT NULL,
     expire_time TIMESTAMP,
     FOREIGN KEY (segment_slug) REFERENCES segment(slug),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    status INTEGER DEFAULT 0
 );
 
 INSERT INTO users (id) VALUES (1);
@@ -60,10 +61,3 @@ INSERT INTO user_segment
     (user_id, segment_slug, add_time, expire_time)
 VALUES
     (3, 'test_slug3', now(), now() + INTERVAL '1 hour');
-
-
-
-
-
-
-

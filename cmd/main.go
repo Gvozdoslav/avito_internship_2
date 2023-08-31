@@ -6,6 +6,7 @@ import (
 	"avito2/pkg/repository"
 	"avito2/pkg/repository/postgres"
 	"avito2/pkg/service"
+	_scheduler "avito2/pkg/service/scheduler"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -43,6 +44,9 @@ func main() {
 	repos := repository.NewRepositories(db)
 	services := service.NewServices(repos)
 	handlers := handler.NewHandler(services)
+
+	scheduler := _scheduler.NewScheduler(&repos.UserSegmentRepository)
+	scheduler.ScheduleDeletion()
 
 	server := new(Server)
 	err = server.Run(viper.GetString("port"), handlers.InitRoutes())

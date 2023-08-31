@@ -1,7 +1,7 @@
 definitions:
   dto.SegmentDto:
     properties:
-      createTime:
+      addTime:
         type: string
       expireTime:
         type: string
